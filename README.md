@@ -1,5 +1,8 @@
 # algemeen
 
+Om het project op te starten, zal eerst de code gekloond moeten worden naar de eigen pc. In de rootfolder van het project moet de volgende command worden uitgevoerd via de opdrachtprompt:
+`docker-compose up`
+
 ## Ports & services
 
 | Container                     | Address            | Port | Type     | Language/Framework    | In-use             |
@@ -17,4 +20,3 @@
 | Wildzone-database-baskets     | localhost:3309     | 3309 | Database | ???                   | :x:                |
 | Wildzone-database-categories  | localhost:3310     | 3310 | Database | MySQL                 | :x:                |
 
-s
