@@ -1,11 +1,31 @@
 version: '3.8'
 services:
+################################
+# Webapp
+################################
+
+################################
+# API's
+################################
+
+  wildzone-api-suppliers:
+      image: jjuless/wildzone-api-suppliers
+      environment:
+        DB_HOST: wildzone-database-suppliers
+        DB_USER: $DB_USER
+        DB_PASSWORD: $DB_PASSWORD
+        DB_DATABASE: $DB_DATABASE
+        DB_PORT: $DB_PORT
+        DB_DIALECT: $DB_DIALECT
+      ports:
+        - 3002:3000
+      restart: on-failure
+
+################################
+# Databases
+################################
   wildzone-database-suppliers:
     image: mysql
-    networks:
-      - wildzone-network
-    expose:
-      - "3306"
     ports:
       - 3306:3306
     environment:
@@ -13,10 +33,12 @@ services:
     volumes:
       - ./sql-scripts:/docker-entrypoint-initdb.d
 
+################################
+# Databases Admins
+################################  
+
   wildzone-db-admin-suppliers:
     image: phpmyadmin/phpmyadmin
-    networks:
-      - wildzone-network
     ports:
       - 8080:80
     environment:
@@ -24,24 +46,5 @@ services:
     depends_on:
       - wildzone-database-suppliers
 
-  wildzone-api-suppliers:
-    image: jjuless/wildzone-api-suppliers
-    environment:
-      DB_HOST: wildzone-database-suppliers
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      DB_DATABASE: $DB_DATABASE
-      DB_PORT: $DB_PORT
-      DB_DIALECT: $DB_DIALECT
-    depends_on: 
-      - wildzone-database-suppliers
-    networks:
-      - wildzone-network
-    build: .
-    command: bash -c 'while !</dev/tcp/wildzone-database-suppliers/3306; do sleep 1; done; npm start'
-    ports:
-      - 8081:8081
+  
     
-networks:
-  wildzone-network:
-    driver: bridge
