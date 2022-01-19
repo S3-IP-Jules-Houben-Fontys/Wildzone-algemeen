@@ -1,11 +1,40 @@
 version: '3.8'
 services:
+################################
+# Webapp
+################################
+
+################################
+# API's
+################################
+
+  wildzone-api-suppliers:
+      image: jjuless/wildzone-api-suppliers
+      environment:
+        DB_HOST: wildzone-database-suppliers
+        DB_USER: $DB_USER
+        DB_PASSWORD: $DB_PASSWORD
+        DB_DATABASE: $DB_DATABASE
+        DB_PORT: $DB_PORT
+        DB_DIALECT: $DB_DIALECT
+      ports:
+        - 3002:3000
+      restart: on-failure
+
+  wildzone-api-products:
+    image: jjuless/wildzone-api-products
+    ports:
+      - 3003:3003
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+
+################################
+# Databases
+################################
   wildzone-database-suppliers:
     image: mysql
-    networks:
-      - wildzone-network
-    expose:
-      - "3306"
     ports:
       - 3306:3306
     environment:
@@ -13,10 +42,26 @@ services:
     volumes:
       - ./sql-scripts:/docker-entrypoint-initdb.d
 
+  mongodb:
+    image: mongo
+    container_name: Wildzone-database-products
+    ports: 
+      - 27017:27017
+    expose:
+      - 27017
+    volumes:
+      - data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    restart: always
+
+################################
+# Databases Admins
+################################  
+
   wildzone-db-admin-suppliers:
     image: phpmyadmin/phpmyadmin
-    networks:
-      - wildzone-network
     ports:
       - 8080:80
     environment:
@@ -24,24 +69,10 @@ services:
     depends_on:
       - wildzone-database-suppliers
 
-  wildzone-api-suppliers:
-    image: jjuless/wildzone-api-suppliers
-    environment:
-      DB_HOST: wildzone-database-suppliers
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      DB_DATABASE: $DB_DATABASE
-      DB_PORT: $DB_PORT
-      DB_DIALECT: $DB_DIALECT
-    depends_on: 
-      - wildzone-database-suppliers
-    networks:
-      - wildzone-network
-    build: .
-    command: bash -c 'while !</dev/tcp/wildzone-database-suppliers/3306; do sleep 1; done; npm start'
-    ports:
-      - 8081:8081
+
+################################
+# Volumes
+################################  
+volumes:
+  data: {}
     
-networks:
-  wildzone-network:
-    driver: bridge
