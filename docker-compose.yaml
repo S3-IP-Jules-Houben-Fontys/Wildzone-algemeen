@@ -21,6 +21,15 @@ services:
         - 3002:3000
       restart: on-failure
 
+  wildzone-api-products:
+    image: jjuless/wildzone-api-products
+    ports:
+      - 3003:3003
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+
 ################################
 # Databases
 ################################
@@ -32,6 +41,20 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_MYSQL_ROOT_PASSWORD}
     volumes:
       - ./sql-scripts:/docker-entrypoint-initdb.d
+
+  mongodb:
+    image: mongo
+    container_name: Wildzone-database-products
+    ports: 
+      - 27017:27017
+    expose:
+      - 27017
+    volumes:
+      - data:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    restart: always
 
 ################################
 # Databases Admins
@@ -46,5 +69,10 @@ services:
     depends_on:
       - wildzone-database-suppliers
 
-  
+
+################################
+# Volumes
+################################  
+volumes:
+  data: {}
     
