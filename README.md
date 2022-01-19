@@ -20,7 +20,7 @@ Om het project op te starten, moet eerst de code gekloond moeten worden naar de 
 
 <h2 id="overzicht">Overzicht van project</h2>
 
-
+![Wildzone-C2 Container diagram drawio (4)](https://user-images.githubusercontent.com/73841047/150106747-7fdbd1af-3710-41b0-9f90-4b4b4f7c9e46.png)
 
 <h2 id="services"> Ports & services </h2>
 
